@@ -26,15 +26,15 @@ func main() {
 		AllowedHeaders: []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
 	}))
 
-	r.Get("/readiness", readinessHandler)
-
 	r2 := chi.NewRouter()
-	r2.Mount("/v1", r)
+	r2.Get("/readiness", readinessHandler)
+	r.Mount("/v1", r2)
 	// Serve static files from the root directory
-	r2.Handle("/", http.FileServer(http.Dir(".")))
+	// r2.Mount("/", http.FileServer(http.Dir(".")))
 
 	srv := &http.Server{
-		Addr: ":" + port,
+		Addr:    ":" + port,
+		Handler: r,
 	}
 	log.Printf("Serving files on port: %s\n", port)
 	if err := srv.ListenAndServe(); err != http.ErrServerClosed {
