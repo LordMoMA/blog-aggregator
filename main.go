@@ -28,6 +28,7 @@ func main() {
 
 	r2 := chi.NewRouter()
 	r2.Get("/readiness", readinessHandler)
+	r2.Get("/err", errHandler)
 	r.Mount("/v1", r2)
 	// Serve static files from the root directory
 	// r2.Mount("/", http.FileServer(http.Dir(".")))
@@ -44,6 +45,10 @@ func main() {
 
 func readinessHandler(w http.ResponseWriter, r *http.Request) {
 	respondwithJSON(w, http.StatusOK, map[string]string{"status": "ok"})
+}
+
+func errHandler(w http.ResponseWriter, r *http.Request) {
+	respondWithError(w, http.StatusInternalServerError, "Internal Server Error")
 }
 
 func respondwithJSON(w http.ResponseWriter, code int, payload interface{}) {
