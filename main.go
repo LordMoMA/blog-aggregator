@@ -2,7 +2,6 @@ package main
 
 import (
 	"database/sql"
-	"encoding/json"
 	"log"
 	"net/http"
 	"os"
@@ -24,8 +23,18 @@ func main() {
 	}
 
 	dbURL := os.Getenv("DATABASE_URL")
+	if dbURL == "" {
+		log.Fatal("DATABASE_URL is not set")
+	}
 	db, err := sql.Open("postgres", dbURL)
+	if err != nil {
+		log.Fatal(err)
+	}
 	dbQueries := database.New(db)
+
+	apiCfg := &apiConfig{
+		DB: dbQueries,
+	}
 
 	port := os.Getenv("PORT")
 
@@ -41,7 +50,7 @@ func main() {
 	r2.Get("/readiness", readinessHandler)
 	r2.Get("/err", errHandler)
 
-	r2.Post("/users", userHandler)
+	r2.Post("/users", apiCfg.userHandler)
 
 	r.Mount("/v1", r2)
 
@@ -53,25 +62,4 @@ func main() {
 	if err := srv.ListenAndServe(); err != http.ErrServerClosed {
 		log.Fatalf("HTTP server ListenAndServe: %v", err)
 	}
-}
-
-func readinessHandler(w http.ResponseWriter, r *http.Request) {
-	respondwithJSON(w, http.StatusOK, map[string]string{"status": "ok"})
-}
-
-func errHandler(w http.ResponseWriter, r *http.Request) {
-	respondWithError(w, http.StatusInternalServerError, "Internal Server Error")
-}
-
-func respondwithJSON(w http.ResponseWriter, code int, payload interface{}) {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(code)
-
-	if err := json.NewEncoder(w).Encode(payload); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
-}
-
-func respondWithError(w http.ResponseWriter, code int, msg string) {
-	respondwithJSON(w, code, map[string]string{"error": msg})
 }
