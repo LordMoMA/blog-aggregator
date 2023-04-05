@@ -16,7 +16,7 @@ type userRequest struct {
 func (apiCfg *apiConfig) userHandler(w http.ResponseWriter, r *http.Request) {
 	var req userRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		respondWithError(w, http.StatusBadRequest, "Couldn't decode parameters")
 		return
 	}
 
@@ -29,12 +29,9 @@ func (apiCfg *apiConfig) userHandler(w http.ResponseWriter, r *http.Request) {
 
 	user, err := apiCfg.DB.CreateUser(r.Context(), params)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		respondWithError(w, http.StatusInternalServerError, "Couldn't create user")
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(user)
-
+	respondwithJSON(w, http.StatusOK, user)
 }
