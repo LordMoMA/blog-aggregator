@@ -1,6 +1,7 @@
 package main
 
 import (
+	"database/sql"
 	"encoding/json"
 	"log"
 	"net/http"
@@ -9,13 +10,23 @@ import (
 	"github.com/go-chi/chi"
 	"github.com/go-chi/cors"
 	"github.com/joho/godotenv"
+	"github.com/lordmoma/blog-aggregator/internal/database"
 )
+
+type apiConfig struct {
+	DB *database.Queries
+}
 
 func main() {
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatal("Error loading .env file")
 	}
+
+	dbURL := os.Getenv("DATABASE_URL")
+	db, err := sql.Open("postgres", dbURL)
+	dbQueries := database.New(db)
+
 	port := os.Getenv("PORT")
 
 	r := chi.NewRouter()
@@ -29,9 +40,10 @@ func main() {
 	r2 := chi.NewRouter()
 	r2.Get("/readiness", readinessHandler)
 	r2.Get("/err", errHandler)
+
+	r2.Post("/users", userHandler)
+
 	r.Mount("/v1", r2)
-	// Serve static files from the root directory
-	// r2.Mount("/", http.FileServer(http.Dir(".")))
 
 	srv := &http.Server{
 		Addr:    ":" + port,
