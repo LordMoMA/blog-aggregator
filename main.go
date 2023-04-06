@@ -55,7 +55,9 @@ func main() {
 	r2.Get("/readiness", readinessHandler)
 	r2.Get("/err", errHandler)
 
+	// user routes
 	r2.Post("/users", apiCfg.userHandler)
+	r2.Get("/users", apiCfg.getUserHandler)
 
 	r.Mount("/v1", r2)
 
