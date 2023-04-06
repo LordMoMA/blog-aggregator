@@ -24,6 +24,9 @@ func main() {
 	}
 
 	port := os.Getenv("PORT")
+	if port == "" {
+		log.Fatal("PORT is not set")
+	}
 
 	dbURL := os.Getenv("DATABASE_URL")
 	if dbURL == "" {
