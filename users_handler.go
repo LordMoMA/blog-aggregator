@@ -14,7 +14,7 @@ type userRequest struct {
 	Name string `json:"name"`
 }
 
-func (apiCfg *apiConfig) userHandler(w http.ResponseWriter, r *http.Request) {
+func (apiCfg *apiConfig) createUserHandler(w http.ResponseWriter, r *http.Request) {
 	var req userRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		respondWithError(w, http.StatusBadRequest, "Couldn't decode parameters")
