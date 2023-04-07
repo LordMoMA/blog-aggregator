@@ -56,3 +56,13 @@ func (apiCfg *apiConfig) createFeedHandler(w http.ResponseWriter, r *http.Reques
 		UserID:    feed.UserID,
 	})
 }
+
+func (apiCfg *apiConfig) getFeedHandler(w http.ResponseWriter, r *http.Request) {
+	feed, err := apiCfg.DB.GetFeeds(r.Context())
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, "Couldn't get feeds")
+		return
+	}
+
+	respondWithJSON(w, http.StatusOK, feed)
+}

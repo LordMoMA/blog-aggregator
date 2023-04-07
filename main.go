@@ -64,6 +64,7 @@ func main() {
 
 	// feed routes
 	r2.Post("/feeds", apiCfg.middlewareAuth(apiCfg.createFeedHandler))
+	r2.Get("/feeds", apiCfg.getFeedHandler)
 
 	r.Mount("/v1", r2)
 
