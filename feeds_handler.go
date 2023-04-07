@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/lordmoma/blog-aggregator/internal/auth"
 	"github.com/lordmoma/blog-aggregator/internal/database"
 )
 
@@ -25,22 +24,11 @@ type feedResponse struct {
 	UserID    uuid.UUID `json:"user_id"`
 }
 
-func (apiCfg *apiConfig) createFeedHandler(w http.ResponseWriter, r *http.Request) {
+func (apiCfg *apiConfig) createFeedHandler(w http.ResponseWriter, r *http.Request, user database.User) {
 	var req feedRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		respondWithError(w, http.StatusBadRequest, "Couldn't decode parameters")
 		return
-	}
-
-	apiKey, err := auth.GetApiKey(r)
-	if err != nil {
-		respondWithError(w, http.StatusUnauthorized, "Couldn't get api key")
-		return
-	}
-	user, err := apiCfg.DB.GetUserbyApiKey(r.Context(), apiKey)
-
-	if err != nil {
-		respondWithError(w, http.StatusInternalServerError, "Couldn't get user")
 	}
 
 	params := database.CreateFeedParams{
