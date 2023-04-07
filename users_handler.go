@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strings"
 	"time"
@@ -23,13 +24,14 @@ func (apiCfg *apiConfig) createUserHandler(w http.ResponseWriter, r *http.Reques
 
 	params := database.CreateUserParams{
 		ID:        uuid.New(),
-		CreatedAt: time.Now(),
-		UpdatedAt: time.Now(),
+		CreatedAt: time.Now().UTC(),
+		UpdatedAt: time.Now().UTC(),
 		Name:      req.Name,
 	}
 
 	user, err := apiCfg.DB.CreateUser(r.Context(), params)
 	if err != nil {
+		fmt.Println(err)
 		respondWithError(w, http.StatusInternalServerError, "Couldn't create user")
 		return
 	}
@@ -49,11 +51,11 @@ func (apiCfg *apiConfig) getUserHandler(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	users, err := apiCfg.DB.GetUserbyApiKey(r.Context(), apiKey)
+	user, err := apiCfg.DB.GetUserbyApiKey(r.Context(), apiKey)
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, "Couldn't get users")
 		return
 	}
 
-	respondwithJSON(w, http.StatusOK, users)
+	respondwithJSON(w, http.StatusOK, user)
 }
