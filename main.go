@@ -60,7 +60,7 @@ func main() {
 
 	// user routes
 	r2.Post("/users", apiCfg.createUserHandler)
-	r2.Get("/users", apiCfg.getUserHandler)
+	r2.Get("/users", apiCfg.middlewareAuth(apiCfg.getUserHandler))
 
 	r.Mount("/v1", r2)
 
