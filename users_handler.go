@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"strings"
 	"time"
 
 	"github.com/google/uuid"
@@ -39,23 +38,6 @@ func (apiCfg *apiConfig) createUserHandler(w http.ResponseWriter, r *http.Reques
 	respondwithJSON(w, http.StatusOK, user)
 }
 
-func (apiCfg *apiConfig) getUserHandler(w http.ResponseWriter, r *http.Request) {
-	authHeader := r.Header.Get("Authorization")
-	if authHeader == "" {
-		respondWithError(w, http.StatusUnauthorized, "No auth header")
-		return
-	}
-	apiKey := strings.TrimPrefix(authHeader, "ApiKey ")
-	if apiKey == "" {
-		respondWithError(w, http.StatusUnauthorized, "No api key")
-		return
-	}
-
-	user, err := apiCfg.DB.GetUserbyApiKey(r.Context(), apiKey)
-	if err != nil {
-		respondWithError(w, http.StatusInternalServerError, "Couldn't get users")
-		return
-	}
-
+func (apiCfg *apiConfig) getUserHandler(w http.ResponseWriter, r *http.Request, user database.User) {
 	respondwithJSON(w, http.StatusOK, user)
 }
