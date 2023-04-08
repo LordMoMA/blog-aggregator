@@ -1,6 +1,6 @@
 # Blog Aggregation
 
-![Blog Aggregator](.images/1.png "Blog Aggregator")
+![Blog Aggregator](./images/1.png "Blog Aggregator")
 
 ## Introduction
 
