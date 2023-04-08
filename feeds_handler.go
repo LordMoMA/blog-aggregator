@@ -37,6 +37,11 @@ type feedFollowResponse struct {
 	UpdatedAt time.Time `json:"updated_at"`
 }
 
+type combineResponse struct {
+	Feed       feedResponse       `json:"feed"`
+	FeedFollow feedFollowResponse `json:"feed_follow"`
+}
+
 func (apiCfg *apiConfig) createFeedHandler(w http.ResponseWriter, r *http.Request, user database.User) {
 	var req feedRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
@@ -60,13 +65,36 @@ func (apiCfg *apiConfig) createFeedHandler(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	respondWithJSON(w, http.StatusOK, feedResponse{
-		ID:        feed.ID,
-		CreatedAt: feed.CreatedAt,
-		UpdatedAt: feed.UpdatedAt,
-		Name:      feed.Name,
-		URL:       feed.Url,
-		UserID:    feed.UserID,
+	params2 := database.CreateFeedFollowParams{
+		ID:        uuid.New(),
+		FeedID:    feed.ID,
+		UserID:    user.ID,
+		CreatedAt: time.Now().UTC(),
+		UpdatedAt: time.Now().UTC(),
+	}
+
+	feedFollow, err := apiCfg.DB.CreateFeedFollow(r.Context(), params2)
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, "Couldn't create feed follow")
+		return
+	}
+
+	respondWithJSON(w, http.StatusOK, combineResponse{
+		Feed: feedResponse{
+			ID:        feed.ID,
+			CreatedAt: feed.CreatedAt,
+			UpdatedAt: feed.UpdatedAt,
+			Name:      feed.Name,
+			URL:       feed.Url,
+			UserID:    feed.UserID,
+		},
+		FeedFollow: feedFollowResponse{
+			ID:        feedFollow.ID,
+			FeedID:    feedFollow.FeedID,
+			UserID:    feedFollow.UserID,
+			CreatedAt: feedFollow.CreatedAt,
+			UpdatedAt: feedFollow.UpdatedAt,
+		},
 	})
 }
 
@@ -127,7 +155,6 @@ func (apiCfg *apiConfig) deleteFeedFollowHandler(w http.ResponseWriter, r *http.
 	respondWithJSON(w, http.StatusOK, nil)
 }
 
-// getFeedFollowHandler
 func (apiCfg *apiConfig) getFeedFollowHandler(w http.ResponseWriter, r *http.Request, user database.User) {
 	feedFollow, err := apiCfg.DB.GetFeedFollows(r.Context(), user.ID)
 	if err != nil {

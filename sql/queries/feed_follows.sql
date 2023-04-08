@@ -15,4 +15,4 @@ WHERE id = $1;
 
 -- name: GetFeedFollows :many
 SELECT * FROM feed_follows
-WHERE feed_id = $1;
+WHERE user_id = $1;
