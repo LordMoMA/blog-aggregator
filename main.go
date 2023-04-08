@@ -67,6 +67,7 @@ func main() {
 	r2.Get("/feeds", apiCfg.getFeedHandler)
 
 	// feed_follows routes
+	r2.Get("/feed_follows", apiCfg.middlewareAuth(apiCfg.getFeedFollowHandler))
 	r2.Post("/feed_follows", apiCfg.middlewareAuth(apiCfg.createFeedFollowHandler))
 	r2.Delete("/feed_follows/{feedFollowID}", apiCfg.middlewareAuth(apiCfg.deleteFeedFollowHandler))
 

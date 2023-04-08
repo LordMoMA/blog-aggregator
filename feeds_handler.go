@@ -111,10 +111,11 @@ func (apiCfg *apiConfig) createFeedFollowHandler(w http.ResponseWriter, r *http.
 }
 
 func (apiCfg *apiConfig) deleteFeedFollowHandler(w http.ResponseWriter, r *http.Request, user database.User) {
-	idString := chi.URLParam(r, "id")
+	idString := chi.URLParam(r, "feedFollowID")
+	fmt.Println(idString)
 	id, err := uuid.Parse(idString)
 	if err != nil {
-		respondWithError(w, http.StatusBadRequest, "Couldn't parse feed id")
+		respondWithError(w, http.StatusBadRequest, "Couldn't parse feed_follow id")
 		return
 	}
 
@@ -124,4 +125,15 @@ func (apiCfg *apiConfig) deleteFeedFollowHandler(w http.ResponseWriter, r *http.
 	}
 
 	respondWithJSON(w, http.StatusOK, nil)
+}
+
+// getFeedFollowHandler
+func (apiCfg *apiConfig) getFeedFollowHandler(w http.ResponseWriter, r *http.Request, user database.User) {
+	feedFollow, err := apiCfg.DB.GetFeedFollows(r.Context(), user.ID)
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, "Couldn't get feed follows")
+		return
+	}
+
+	respondWithJSON(w, http.StatusOK, feedFollow)
 }
