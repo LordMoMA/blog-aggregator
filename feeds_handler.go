@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/go-chi/chi"
 	"github.com/google/uuid"
 	"github.com/lordmoma/blog-aggregator/internal/database"
 )
@@ -107,4 +108,20 @@ func (apiCfg *apiConfig) createFeedFollowHandler(w http.ResponseWriter, r *http.
 		CreatedAt: feedFollow.CreatedAt,
 		UpdatedAt: feedFollow.UpdatedAt,
 	})
+}
+
+func (apiCfg *apiConfig) deleteFeedFollowHandler(w http.ResponseWriter, r *http.Request, user database.User) {
+	idString := chi.URLParam(r, "id")
+	id, err := uuid.Parse(idString)
+	if err != nil {
+		respondWithError(w, http.StatusBadRequest, "Couldn't parse feed id")
+		return
+	}
+
+	if err := apiCfg.DB.DeleteFeedFollow(r.Context(), id); err != nil {
+		respondWithError(w, http.StatusInternalServerError, "Couldn't delete feed follow")
+		return
+	}
+
+	respondWithJSON(w, http.StatusOK, nil)
 }
