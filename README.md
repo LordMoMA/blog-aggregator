@@ -1,5 +1,7 @@
 # Blog Aggregation
 
+![Blog Aggregator](.images/1.png "Blog Aggregator")
+
 ## Introduction
 
 It's a web server that allows clients to:
