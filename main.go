@@ -77,6 +77,9 @@ func main() {
 		Addr:    ":" + port,
 		Handler: r,
 	}
+
+	go fetchFeedsWorker(apiCfg.DB, 10)
+
 	log.Printf("Serving files on port: %s\n", port)
 	if err := srv.ListenAndServe(); err != http.ErrServerClosed {
 		log.Fatalf("HTTP server ListenAndServe: %v", err)
