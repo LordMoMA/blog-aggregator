@@ -66,6 +66,9 @@ func main() {
 	r2.Post("/feeds", apiCfg.middlewareAuth(apiCfg.createFeedHandler))
 	r2.Get("/feeds", apiCfg.getFeedHandler)
 
+	// feed_follows routes
+	r2.Post("/feed_follows", apiCfg.middlewareAuth(apiCfg.createFeedFollowHandler))
+
 	r.Mount("/v1", r2)
 
 	srv := &http.Server{
