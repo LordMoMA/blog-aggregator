@@ -80,7 +80,7 @@ func (apiCfg *apiConfig) getFeedHandler(w http.ResponseWriter, r *http.Request) 
 }
 
 func (apiCfg *apiConfig) createFeedFollowHandler(w http.ResponseWriter, r *http.Request, user database.User) {
-	var req feedRequest
+	var req feedFollowRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		respondWithError(w, http.StatusBadRequest, "Couldn't decode parameters")
 		return
