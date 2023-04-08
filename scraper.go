@@ -5,31 +5,34 @@ import (
 	"net/http"
 )
 
-type Item struct {
-	Title       string `xml:"title"`
-	Link        string `xml:"link"`
-	Description string `xml:"description"`
-}
-
-type Channel struct {
-	Title string `xml:"title"`
-	Link  string `xml:"link"`
-	Items []Item `xml:"item"`
-}
-
-type Rss struct {
+type RssFeed struct {
 	XMLName xml.Name `xml:"rss"`
 	Channel Channel  `xml:"channel"`
 }
 
-func FetchFeedData(feedURL string) (*Rss, error) {
+type Channel struct {
+	Title       string `xml:"title"`
+	Link        string `xml:"link"`
+	Description string `xml:"description"`
+	Language    string `xml:"language"`
+	Item        []Item `xml:"item"`
+}
+
+type Item struct {
+	Title       string `xml:"title"`
+	Link        string `xml:"link"`
+	Description string `xml:"description"`
+	PubDate     string `xml:"pubDate"`
+}
+
+func FetchFeedData(feedURL string) (*RssFeed, error) {
 	resp, err := http.Get(feedURL)
 	if err != nil {
 		return nil, err
 	}
 	defer resp.Body.Close()
 
-	var rss Rss
+	var rss RssFeed
 	err = xml.NewDecoder(resp.Body).Decode(&rss)
 	if err != nil {
 		return nil, err
