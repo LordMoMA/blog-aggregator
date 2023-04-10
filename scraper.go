@@ -33,7 +33,7 @@ type Item struct {
 }
 
 type Post struct {
-	ID          int32     `db:"id"`
+	ID          uuid.UUID `db:"id"`
 	FeedID      uuid.UUID `db:"feed_id"`
 	CreatedAt   time.Time `db:"created_at"`
 	UpdatedAt   time.Time `db:"updated_at"`
@@ -103,11 +103,32 @@ func fetchFeedsWorker(db *database.Queries, concurrency int32) {
 
 				log.Printf("Feed %s:\n", rss.Channel.Title)
 				for _, item := range rss.Channel.Item {
-					log.Printf("- %s\n", item.Title)
+
+					t, err := time.Parse(item.PubDate, item.PubDate)
+					if err != nil {
+						log.Printf("Error parsing time: %v\n", err)
+						continue
+					}
+
+					post := database.CreatePostParams{
+						ID:          uuid.New(),
+						FeedID:      feed.ID,
+						CreatedAt:   time.Now(),
+						UpdatedAt:   time.Now(),
+						Title:       item.Title,
+						Description: item.Description,
+						Url:         item.Link,
+						PublishedAt: t,
+					}
+					p, err := db.CreatePost(ctx, post)
+					if err != nil {
+						log.Printf("Error creating post: %v\n", err)
+						continue
+					}
+					log.Printf("- %s\n", p)
 				}
 			}(feed)
 		}
-
 		// Wait for all feeds to finish processing
 		wg.Wait()
 	}
