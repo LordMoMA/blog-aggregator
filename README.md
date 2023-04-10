@@ -25,3 +25,8 @@ I published each step of my design process in Medium, and it'll be helpful to fo
 6. [Build a Content Aggregator in Go(6-Get all feeds)](https://medium.com/@lordmoma/build-a-content-aggregator-in-go-6-get-all-feeds-17d6a78da83a)
 7. [Build a Content Aggregator in Go(7-Feed Follows)](https://medium.com/@lordmoma/build-a-content-aggregator-in-go-7-feed-follows-50693c350cd1)
 8. [Build a Content Aggregator in Go(8-Scraper)](https://medium.com/@lordmoma/build-a-content-aggregator-in-go-8-scraper-8a60593b52d0)
+9. [Build a Content Aggregator in Go(9-Database POSTs Table)](https://medium.com/@lordmoma/build-a-content-aggregator-in-go-9-database-posts-table-5443ce8289a6)
+
+## Improvements
+
+The codebase needs refactoring and more optimizations, please feel free to contribute.
