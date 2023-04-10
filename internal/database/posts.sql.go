@@ -13,7 +13,7 @@ import (
 )
 
 const createPost = `-- name: CreatePost :one
-INSERT INTO posts (id, feed_id, created_at, updated_at, title, description, url, published_at, updated_at)
+INSERT INTO posts (id, feed_id, created_at, updated_at, title, description, url, published_at)
 VALUES (
     $1, 
     $2, 
@@ -22,8 +22,7 @@ VALUES (
     $5, 
     $6, 
     $7, 
-    $8, 
-    $9
+    $8
 )
 RETURNING id, feed_id, created_at, updated_at, title, description, url, published_at
 `
@@ -37,7 +36,6 @@ type CreatePostParams struct {
 	Description string
 	Url         string
 	PublishedAt time.Time
-	UpdatedAt_2 time.Time
 }
 
 func (q *Queries) CreatePost(ctx context.Context, arg CreatePostParams) (Post, error) {
@@ -50,7 +48,6 @@ func (q *Queries) CreatePost(ctx context.Context, arg CreatePostParams) (Post, e
 		arg.Description,
 		arg.Url,
 		arg.PublishedAt,
-		arg.UpdatedAt_2,
 	)
 	var i Post
 	err := row.Scan(
