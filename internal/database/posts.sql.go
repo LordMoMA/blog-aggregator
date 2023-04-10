@@ -34,7 +34,7 @@ type CreatePostParams struct {
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
 	Title       string
-	Description string
+	Description sql.NullString
 	Url         string
 	PublishedAt sql.NullTime
 }
