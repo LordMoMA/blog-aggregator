@@ -30,7 +30,7 @@ type FeedFollow struct {
 }
 
 type Post struct {
-	ID          int32
+	ID          uuid.UUID
 	FeedID      uuid.UUID
 	CreatedAt   time.Time
 	UpdatedAt   time.Time

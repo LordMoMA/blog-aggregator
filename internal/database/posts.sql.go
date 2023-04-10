@@ -28,7 +28,7 @@ RETURNING id, feed_id, created_at, updated_at, title, description, url, publishe
 `
 
 type CreatePostParams struct {
-	ID          int32
+	ID          uuid.UUID
 	FeedID      uuid.UUID
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
