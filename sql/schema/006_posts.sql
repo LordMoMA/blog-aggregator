@@ -7,7 +7,7 @@ CREATE TABLE posts (
   title VARCHAR(255) NOT NULL,
   description TEXT NOT NULL,
   url VARCHAR(255) NOT NULL,
-  published_at TIMESTAMP NOT NULL
+  published_at TIMESTAMP 
 );
 
 -- +goose Down

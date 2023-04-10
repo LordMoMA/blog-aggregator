@@ -7,6 +7,7 @@ package database
 
 import (
 	"context"
+	"database/sql"
 	"time"
 
 	"github.com/google/uuid"
@@ -35,7 +36,7 @@ type CreatePostParams struct {
 	Title       string
 	Description string
 	Url         string
-	PublishedAt time.Time
+	PublishedAt sql.NullTime
 }
 
 func (q *Queries) CreatePost(ctx context.Context, arg CreatePostParams) (Post, error) {

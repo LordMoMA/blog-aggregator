@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"database/sql"
 	"encoding/xml"
 	"log"
 	"net/http"
@@ -94,13 +95,21 @@ func fetchFeedsWorker(db *database.Queries, concurrency int32) {
 
 				for _, item := range rss.Channel.Item {
 
-					dateStr := item.PubDate
-					layout := "Mon, 02 Jan 2006 15:04:05 -0700"
+					// dateStr := item.PubDate
+					// layout := "Mon, 02 Jan 2006 15:04:05 -0700"
 
-					date, err := time.Parse(layout, dateStr)
-					if err != nil {
-						log.Printf("Error parsing time: %v\n", err)
-						return
+					// date, err := time.Parse(layout, dateStr)
+					// if err != nil {
+					// 	log.Printf("Error parsing time: %v\n", err)
+					// 	return
+					// }
+
+					publishedAt := sql.NullTime{}
+					if t, err := time.Parse(time.RFC1123Z, item.PubDate); err == nil {
+						publishedAt = sql.NullTime{
+							Time:  t,
+							Valid: true,
+						}
 					}
 
 					post := database.CreatePostParams{
@@ -111,15 +120,15 @@ func fetchFeedsWorker(db *database.Queries, concurrency int32) {
 						Title:       item.Title,
 						Description: item.Description,
 						Url:         item.Link,
-						PublishedAt: date,
+						PublishedAt: publishedAt,
 					}
 
-					p, err := db.CreatePost(ctx, post)
+					_, err := db.CreatePost(ctx, post)
 					if err != nil {
 						log.Printf("Error creating post: %v\n", err)
-						return
+						continue
 					}
-					log.Printf("- %s\n", p)
+					log.Printf("Feed %s collected, %v posts found", feed.Name, len(rss.Channel.Item))
 				}
 			}(feed)
 		}
