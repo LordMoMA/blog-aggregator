@@ -32,17 +32,6 @@ type Item struct {
 	PubDate     string `xml:"pubDate"`
 }
 
-type Post struct {
-	ID          uuid.UUID `db:"id"`
-	FeedID      uuid.UUID `db:"feed_id"`
-	CreatedAt   time.Time `db:"created_at"`
-	UpdatedAt   time.Time `db:"updated_at"`
-	Title       string    `db:"title"`
-	Description string    `db:"description"`
-	Url         string    `db:"url"`
-	PublishedAt time.Time `db:"published_at"`
-}
-
 func FetchFeedData(feedURL string) (*RssFeed, error) {
 	resp, err := http.Get(feedURL)
 	if err != nil {
@@ -102,6 +91,7 @@ func fetchFeedsWorker(db *database.Queries, concurrency int32) {
 				}
 
 				log.Printf("Feed %s:\n", rss.Channel.Title)
+
 				for _, item := range rss.Channel.Item {
 
 					dateStr := item.PubDate
