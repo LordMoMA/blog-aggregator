@@ -104,10 +104,13 @@ func fetchFeedsWorker(db *database.Queries, concurrency int32) {
 				log.Printf("Feed %s:\n", rss.Channel.Title)
 				for _, item := range rss.Channel.Item {
 
-					t, err := time.Parse(item.PubDate, item.PubDate)
+					dateStr := item.PubDate
+					layout := "Mon, 02 Jan 2006 15:04:05 -0700"
+
+					date, err := time.Parse(layout, dateStr)
 					if err != nil {
 						log.Printf("Error parsing time: %v\n", err)
-						continue
+						return
 					}
 
 					post := database.CreatePostParams{
@@ -118,12 +121,13 @@ func fetchFeedsWorker(db *database.Queries, concurrency int32) {
 						Title:       item.Title,
 						Description: item.Description,
 						Url:         item.Link,
-						PublishedAt: t,
+						PublishedAt: date,
 					}
+
 					p, err := db.CreatePost(ctx, post)
 					if err != nil {
 						log.Printf("Error creating post: %v\n", err)
-						continue
+						return
 					}
 					log.Printf("- %s\n", p)
 				}

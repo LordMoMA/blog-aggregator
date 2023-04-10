@@ -71,6 +71,9 @@ func main() {
 	r2.Post("/feed_follows", apiCfg.middlewareAuth(apiCfg.createFeedFollowHandler))
 	r2.Delete("/feed_follows/{feedFollowID}", apiCfg.middlewareAuth(apiCfg.deleteFeedFollowHandler))
 
+	// posts routes
+	r2.Get("/posts", apiCfg.middlewareAuth(apiCfg.getPostsHandler))
+
 	r.Mount("/v1", r2)
 
 	srv := &http.Server{
