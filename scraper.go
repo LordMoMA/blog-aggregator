@@ -95,15 +95,6 @@ func fetchFeedsWorker(db *database.Queries, concurrency int32) {
 
 				for _, item := range rss.Channel.Item {
 
-					// dateStr := item.PubDate
-					// layout := "Mon, 02 Jan 2006 15:04:05 -0700"
-
-					// date, err := time.Parse(layout, dateStr)
-					// if err != nil {
-					// 	log.Printf("Error parsing time: %v\n", err)
-					// 	return
-					// }
-
 					publishedAt := sql.NullTime{}
 					if t, err := time.Parse(time.RFC1123Z, item.PubDate); err == nil {
 						publishedAt = sql.NullTime{
@@ -113,12 +104,15 @@ func fetchFeedsWorker(db *database.Queries, concurrency int32) {
 					}
 
 					post := database.CreatePostParams{
-						ID:          uuid.New(),
-						FeedID:      feed.ID,
-						CreatedAt:   time.Now(),
-						UpdatedAt:   time.Now(),
-						Title:       item.Title,
-						Description: item.Description,
+						ID:        uuid.New(),
+						FeedID:    feed.ID,
+						CreatedAt: time.Now(),
+						UpdatedAt: time.Now(),
+						Title:     item.Title,
+						Description: sql.NullString{
+							String: item.Description,
+							Valid:  true,
+						},
 						Url:         item.Link,
 						PublishedAt: publishedAt,
 					}
