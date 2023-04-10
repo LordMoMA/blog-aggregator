@@ -106,8 +106,8 @@ func fetchFeedsWorker(db *database.Queries, concurrency int32) {
 					post := database.CreatePostParams{
 						ID:        uuid.New(),
 						FeedID:    feed.ID,
-						CreatedAt: time.Now(),
-						UpdatedAt: time.Now(),
+						CreatedAt: time.Now().UTC(),
+						UpdatedAt: time.Now().UTC(),
 						Title:     item.Title,
 						Description: sql.NullString{
 							String: item.Description,

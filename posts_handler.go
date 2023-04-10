@@ -16,10 +16,10 @@ type Post struct {
 	UpdatedAt time.Time `json:"updated_at"`
 	Title     string    `json:"title"`
 	// Description is optional
-	Description *string `json:"description,omitempty"`
+	Description *string `json:"description"`
 	Url         string  `json:"url"`
 	// PublishedAt is optional
-	PublishedAt *time.Time `json:"published_at,omitempty"`
+	PublishedAt *time.Time `json:"published_at"`
 }
 
 func (apiCfg *apiConfig) getPostsHandler(w http.ResponseWriter, r *http.Request, user database.User) {
