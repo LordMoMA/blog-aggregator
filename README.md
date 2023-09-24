@@ -13,6 +13,28 @@ It's a web server that allows clients to:
 
 You can use this project to keep up with your favorite blogs, news sites, podcasts, and more!
 
+## How to run
+
+1.Set up your PostgreSQL DB locally
+
+```bash
+brew services start postgresql@15
+```
+
+2.Create a `.env` file in the root directory and add the following: `PORT` and `DATABASE_URL`
+
+3.Do migrations using goose
+
+```bash
+goose postgres postgres://user:password@host:port/database?sslmode=disable up
+```
+
+4.Init the project
+
+```bash
+go build && ./out
+```
+
 ## Steps
 
 I published each step of my design process in Medium, and it'll be helpful to follow along the details of this project with the articles if you want to learn to scrape:
