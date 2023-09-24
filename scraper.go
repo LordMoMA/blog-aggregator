@@ -26,11 +26,21 @@ type Channel struct {
 	Item        []Item `xml:"item"`
 }
 
+// https://www.theguardian.com/world/rss
+// type Item struct {
+// 	Title       string `xml:"title"`
+// 	Link        string `xml:"link"`
+// 	Description string `xml:"description"`
+// 	PubDate     string `xml:"pubDate"`
+// }
+
+// https://news.ycombinator.com/rss
 type Item struct {
 	Title       string `xml:"title"`
 	Link        string `xml:"link"`
 	Description string `xml:"description"`
 	PubDate     string `xml:"pubDate"`
+	Comments    string `xml:"comments"` // Add this field to capture the comments link
 }
 
 func FetchFeedData(feedURL string) (*RssFeed, error) {
